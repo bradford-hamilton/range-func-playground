@@ -2,53 +2,50 @@ package main
 
 import (
 	"fmt"
-	"iter"
+
+	"github.com/bradford-hamilton/range-func-playground/stack"
 )
-
-// Queue represents a simple FIFO queue.
-type Queue[T any] struct {
-	items []T
-}
-
-// NewQueue creates a new Queue.
-func NewQueue[T any](items ...T) *Queue[T] {
-	return &Queue[T]{items: items}
-}
-
-// Enqueue adds an item to the queue.
-func (q *Queue[T]) Enqueue(item T) {
-	q.items = append(q.items, item)
-}
-
-// Dequeue removes and returns the item in the front of the
-// queue as well as a success flag in case of failure.
-func (q *Queue[T]) Dequeue() (T, bool) {
-	if len(q.items) == 0 {
-		var zeroVal T
-		return zeroVal, false
-	}
-
-	item := q.items[0]
-	q.items = q.items[1:]
-
-	return item, true
-}
-
-// All returns an iterator over the queue's items.
-func (q *Queue[T]) All() iter.Seq[T] {
-	return func(yield func(T) bool) {
-		for _, item := range q.items {
-			if !yield(item) {
-				return
-			}
-		}
-	}
-}
 
 // GOEXPERIMENT=rangefunc
 func main() {
-	queue := NewQueue(1, 2, 3, 4, 5)
-	for item := range queue.All() {
-		fmt.Println(item)
+	stack1 := stack.New(0, 1, 2, 3, 4, 5, 6, 7)
+	stack1.Push(8)
+	stack1.Push(9)
+	stack1.Push(10)
+
+	for v := range stack1.TopDown() {
+		fmt.Printf("%+v ", v)
 	}
+
+	fmt.Println()
+
+	// --------------------------------------------------- //
+
+	stack2 := stack.New(0, 1, 2, 3, 4, 5, 6, 7)
+	stack2.Push(8)
+	stack2.Push(9)
+	stack2.Push(10)
+
+	for v := range stack2.BottomUp() {
+		fmt.Printf("%+v ", v)
+	}
+
+	fmt.Println()
+
+	item1, ok1 := stack2.Pop()
+	item2, ok2 := stack2.Pop()
+	item3, ok3 := stack2.Pop()
+
+	fmt.Println(item1, ok1)
+	fmt.Println(item2, ok2)
+	fmt.Println(item3, ok3)
+
+	for v := range stack2.BottomUp() {
+		fmt.Printf("%+v ", v)
+	}
+
+	fmt.Println()
+
+	// --------------------------------------------------- //
+
 }
