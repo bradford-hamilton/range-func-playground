@@ -1,0 +1,1 @@
+experimenting with Go 1.22 "range funcs"
